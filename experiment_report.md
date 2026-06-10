@@ -12,8 +12,8 @@ Chay `agent_simulation.py` voi 2 bo du lieu va ghi lai ket qua:
 
 | Scenario | Agent Response | Accuracy (1-10) | Notes |
 |----------|----------------|-----------------|-------|
-| Clean Data (`processed_data.csv`) | (Ghi cau tra loi cua Agent) | | |
-| Garbage Data (`garbage_data.csv`) | (Ghi cau tra loi cua Agent) | | |
+| Clean Data (`processed_data.csv`) | Agent: Based on my data, the best choice is Laptop at $1200. | 10 | Agent đã chọn đúng sản phẩm đồ điện tử giá cao nhất hợp lý. |
+| Garbage Data (`garbage_data.csv`) | Agent: Based on my data, the best choice is Nuclear Reactor at $999999. | 0 | Agent đã chọn sai sản phẩm do dữ liệu outlier không hợp lệ. |
 
 ---
 
@@ -21,15 +21,14 @@ Chay `agent_simulation.py` voi 2 bo du lieu va ghi lai ket qua:
 
 ### Tai sao Agent tra loi sai khi dung Garbage Data?
 
-(Viet nhan xet cua ban o day — it nhat 50 tu)
+Agent trả lời sai khi sử dụng Garbage Data chủ yếu do dữ liệu rác chứa các giá trị ngoại lai (outliers) quá lớn, ví dụ như sản phẩm "Nuclear Reactor" với giá 999999. Vì logic của Agent dựa trên việc tìm sản phẩm có giá cao nhất (`idxmax()`) trong một danh mục, nó sẽ ưu tiên chọn các outlier này bất kể sản phẩm đó có thực sự hợp lý hay không.
 
-(Hay phan tich cac van de nhu Duplicate IDs, wrong data types, outliers, null values
-va giai thich tai sao chung anh huong den ket qua cua Agent.)
+Ngoài ra, dữ liệu rác còn chứa các vấn đề khác như trùng lặp ID, sai kiểu dữ liệu (vd: giá tiền là chữ), hoặc giá trị bị Null. Mặc dù trong trường hợp này, ngoại lai về giá là nguyên nhân trực tiếp làm hỏng logic của Agent, các vấn đề chất lượng dữ liệu khác cũng có thể gây ra lỗi (crash) nếu Agent không được xử lý ngoại lệ cẩn thận (ví dụ cố gắng tính toán trên chuỗi "ten dollars"). Do đó, nếu không có bước Validate & Transform ở Data Pipeline, AI Agent sẽ trực tiếp "ăn" dữ liệu rác và đưa ra kết quả sai lệch hoặc thậm chí bị sập.
 
 ---
 
 ## 3. Ket luan
 
-**Quality Data > Quality Prompt?** (Dong y hay khong? Giai thich ngan gon.)
+**Quality Data > Quality Prompt?** Đồng ý.
 
-(Viet ket luan cua ban o day)
+Cho dù prompt của Agent có hoàn hảo đến đâu, nếu dữ liệu đầu vào (Knowledge Base) chứa rác, Agent vẫn sẽ đưa ra những câu trả lời sai lệch (Garbage In, Garbage Out). Data Pipeline chất lượng cao sẽ đảm bảo dữ liệu đưa vào Agent là chính xác, từ đó giúp Agent hoạt động tin cậy hơn.
